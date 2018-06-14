@@ -26,4 +26,4 @@ PGPASSWORD=$DB_PASSWORD psql \
     -f /code/create_tables.sql 2>&1
 
 # Run index
-./update_ranges_wrapper.sh
+indexing/update_ranges_wrapper.sh
