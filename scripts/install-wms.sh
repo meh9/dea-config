@@ -23,7 +23,7 @@ PGPASSWORD=$DB_PASSWORD psql \
     -h $DB_HOSTNAME \
     -p $DB_PORT \
     -U $DB_USERNAME \
-    -f ~/create_tables.sql 2>&1
+    -f /code/create_tables.sql 2>&1
 
 # Run index
 ./update_ranges_wrapper.sh
