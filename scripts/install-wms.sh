@@ -1,6 +1,4 @@
-# Install pre-reqs
-
-ENV DEBIAN_FRONTEND=noninteractive
+#!/bin/bash
 
 # install psql for WMS database script
 apt-get update && apt-get install -y --no-install-recommends \
