@@ -14,8 +14,8 @@ pip3 install \
 datacube system init --no-init-users 2>&1
 
 # Add Products @TODO: Make this a variable
-datacube product add /opt/dea-config/prod/products/nrt/landsat/products.yaml
-datacube product add /opt/dea-config/prod/products/nrt/sentinel/products.yaml
+datacube product add ../prod/products/nrt/landsat/products.yaml
+datacube product add ../prod/products/nrt/sentinel/products.yaml
 
 # Generate WMS specific config
 PGPASSWORD=$DB_PASSWORD psql \
@@ -26,4 +26,4 @@ PGPASSWORD=$DB_PASSWORD psql \
     -f create_tables.sql 2>&1
 
 # Run index
-/opt/dea-config/scripts/update_ranges_wrapper.sh
+./update_ranges_wrapper.sh
