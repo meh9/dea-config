@@ -16,8 +16,8 @@ pip3 install \
 datacube system init --no-init-users 2>&1
 
 # Add Products @TODO: Make this a variable
-datacube product add /dea-config/prod/products/nrt/landsat/products.yaml
-datacube product add /dea-config/prod/products/nrt/sentinel/products.yaml
+datacube product add /opt/dea-config/prod/products/nrt/landsat/products.yaml
+datacube product add /opt/dea-config/prod/products/nrt/sentinel/products.yaml
 
 # Generate WMS specific config
 PGPASSWORD=$DB_PASSWORD psql \
