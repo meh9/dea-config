@@ -26,4 +26,4 @@ PGPASSWORD=$DB_PASSWORD psql \
     -f create_tables.sql 2>&1
 
 # Run index
-./update_ranges_wrapper.sh
+/opt/dea-config/scripts/update_ranges_wrapper.sh
