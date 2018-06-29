@@ -13,6 +13,7 @@ import logging
 import click
 import re
 import boto3
+from botocore.handlers import disable_signing
 import datacube
 from datacube.scripts.dataset import create_dataset, parse_match_rules_options
 from datacube.utils import changes
@@ -30,6 +31,8 @@ def get_s3_url(bucket_name, obj_key):
 
 def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     s3 = boto3.resource('s3')
+    # Anonymous Access
+    s3.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
     bucket = s3.Bucket(bucket_name)
     logging.info("Bucket : %s prefix: %s ", bucket_name, str(prefix))
     safety = 'safe' if not unsafe else 'unsafe'
@@ -37,7 +40,7 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
         if obj.key.endswith(suffix):
             obj_key = obj.key
             logging.info("Processing %s", obj_key)
-            raw_string = obj.get(ResponseCacheControl='no-cache')['Body'].read().decode('utf8')
+            raw_string = obj.get()['Body'].read().decode('utf8')
             yaml = YAML(typ=safety, pure = True)
             yaml.default_flow_style = False
             data = yaml.load(raw_string)
@@ -65,7 +68,6 @@ def archive_dataset(doc, uri, rules, index):
 
 def add_dataset(doc, uri, rules, index):
     dataset = create_dataset(doc, uri, rules)
-
     try:
         index.datasets.add(dataset) # Source policy to be checked in sentinel 2 datase types 
     except changes.DocumentMismatchError as e:
