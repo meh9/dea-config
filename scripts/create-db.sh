@@ -8,6 +8,8 @@ export TF_VAR_db_password=$DB_PASSWORD
 export TF_VAR_admin_username=$ADMIN_USERNAME
 export TF_VAR_admin_password=$ADMIN_PASSWORD
 
+# Make sure apt doesn't ask questions
+ENV DEBIAN_FRONTEND=noninteractive
 
 # install postgres
 apt-get update && apt-get install -y --no-install-recommends \

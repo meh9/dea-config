@@ -13,7 +13,6 @@ pip3 install \
 # Init system
 datacube system init --no-init-users 2>&1
 
-# Add Products @TODO: Make this a variable
 # Add product definitions to datacube
 # URLS must be delimited with ':' and WITHOUT http(s)://
 function add_products {
