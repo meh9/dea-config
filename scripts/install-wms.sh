@@ -14,8 +14,23 @@ pip3 install \
 datacube system init --no-init-users 2>&1
 
 # Add Products @TODO: Make this a variable
-datacube product add ../prod/products/nrt/landsat/products.yaml
-datacube product add ../prod/products/nrt/sentinel/products.yaml
+# Add product definitions to datacube
+# URLS must be delimited with ':' and WITHOUT http(s)://
+function add_products {
+    mkdir -p firsttime/products
+
+    IFS=: read -ra URLS <<< "$PRODUCT_URLS"
+
+    for U in "${URLS[@]}"
+    do
+        wget -P firsttime/products $U
+    done
+
+    for file in firsttime/products/*
+    do
+        datacube product add ../"$file"
+    done
+}
 
 # Generate WMS specific config
 PGPASSWORD=$DB_PASSWORD psql \
