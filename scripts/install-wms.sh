@@ -15,14 +15,21 @@ datacube system init --no-init-users 2>&1
 
 # Add product definitions to datacube
 # URLS must be delimited with ':' and WITHOUT http(s)://
+# Add product definitions to datacube
+# URLS must be delimited with ':' and WITHOUT http(s)://
 function add_products {
     mkdir -p firsttime/products
 
-    files=$(echo $PRODUCT_URLS | tr ":" "\n")
+    IFS=: read -ra URLS <<< "$PRODUCT_URLS"
 
-    for file in "${files[@]}"
+    for U in "${URLS[@]}"
     do
-        datacube product add ../"$file"
+        wget -P firsttime/products $U
+    done
+
+    for file in firsttime/products/*
+    do
+        datacube product add "$file"
     done
 }
 
