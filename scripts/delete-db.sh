@@ -27,3 +27,5 @@ unzip terraform.zip && \
 cd setup
 
 terraform init -backend-config="bucket=$STATE_BUCKET" -backend-config="key=$DB_DATABASE.tfstate" && terraform destroy -force
+
+dropdb -U test -h wms-gadevs-ga-datacube-dev-mydb-rds.cxhoeczwhtar.ap-southeast-2.rds.amazonaws.com nrt
