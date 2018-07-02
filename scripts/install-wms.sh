@@ -33,6 +33,8 @@ function add_products {
     done
 }
 
+add_products
+
 # Generate WMS specific config
 PGPASSWORD=$DB_PASSWORD psql \
     -d $DB_DATABASE \
