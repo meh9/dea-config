@@ -24,7 +24,7 @@ function add_products {
 
     for U in "${URLS[@]}"
     do
-        wget -P firsttime/products $U -o $(base64($U)).yaml
+        wget -P firsttime/products $U -o $(echo $U | base64).yaml
     done
 
     for file in firsttime/products/*
