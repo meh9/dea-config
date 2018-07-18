@@ -1,3 +1,4 @@
+
 # coding: utf-8
 from xml.etree import ElementTree
 from pathlib import Path
@@ -87,7 +88,6 @@ def worker(config, bucket_name, prefix, suffix, func, unsafe, sources_policy, qu
             uri= get_s3_url(bucket_name, key)
             logging.info("calling %s", func)
             func(data, uri, rules, index, sources_policy)
-            logging.info("Approx %s files remaining", str(queue.qsize()))
         except:
             pass
 
