@@ -34,10 +34,18 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     bucket = s3.Bucket(bucket_name)
     logging.info("Bucket : %s prefix: %s ", bucket_name, str(prefix))
     safety = 'safe' if not unsafe else 'unsafe'
-    for obj in bucket.objects.filter(Prefix = str(prefix)):
+    
+    objects = bucket.objects.filter(Prefix = str(prefix))
+    total = str(list.count(objects))
+    logging.info("Found %s Objects", total)
+    counter = 0
+
+    for obj in objects:
+        counter += 1
         if obj.key.endswith(suffix):
+            logging.info("Processing %s of %s", str(counter), total)
             obj_key = obj.key
-            logging.info("Processing %s", obj_key)
+            logging.debug("Processing %s", obj_key)
             raw_string = obj.get()['Body'].read().decode('utf8')
             yaml = YAML(typ=safety, pure = True)
             yaml.default_flow_style = False
@@ -61,7 +69,7 @@ def archive_dataset(doc, uri, rules, index, sources_policy):
 
     dataset = create_dataset(doc, uri, rules)
     index.datasets.archive(get_ids(dataset))
-    logging.info("Archiving %s and all sources of %s", dataset.id, dataset.id)
+    logging.debug("Archiving %s and all sources of %s", dataset.id, dataset.id)
 
 
 def add_dataset(doc, uri, rules, index, sources_policy):
@@ -72,7 +80,7 @@ def add_dataset(doc, uri, rules, index, sources_policy):
     except changes.DocumentMismatchError as e:
         index.datasets.update(dataset, {tuple(): changes.allow_any})
 
-    logging.info("Indexing %s", uri)
+    logging.debug("Indexing %s", uri)
     return uri
 
 
