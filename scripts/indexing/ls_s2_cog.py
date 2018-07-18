@@ -36,7 +36,7 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     safety = 'safe' if not unsafe else 'unsafe'
     
     objects = bucket.objects.filter(Prefix = str(prefix))
-    total = str(list.count(objects))
+    total = str(objects.count())
     logging.info("Found %s Objects", total)
     counter = 0
 
