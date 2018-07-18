@@ -103,3 +103,4 @@ def main(bucket_name, config, prefix, suffix, archive, unsafe, sources_policy):
 
 if __name__ == "__main__":
     main()
+
