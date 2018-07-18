@@ -36,14 +36,11 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     safety = 'safe' if not unsafe else 'unsafe'
     
     objects = bucket.objects.filter(Prefix = str(prefix))
-    total = str(objects.count())
-    logging.info("Found %s Objects", total)
-    counter = 0
-
-    for obj in objects:
-        counter += 1
+    total = str(len(objects))
+    
+    for idx, obj in enumerate(objects):
         if obj.key.endswith(suffix):
-            logging.info("Processing %s of %s", str(counter), total)
+            logging.info("Processing %s of %s", str(idx), total)
             obj_key = obj.key
             logging.debug("Processing %s", obj_key)
             raw_string = obj.get()['Body'].read().decode('utf8')
