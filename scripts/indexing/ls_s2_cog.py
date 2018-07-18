@@ -35,9 +35,10 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     logging.info("Bucket : %s prefix: %s ", bucket_name, str(prefix))
     safety = 'safe' if not unsafe else 'unsafe'
     
+    logging.info("Counting objects in bucket")
     objects = bucket.objects.filter(Prefix = str(prefix))
-    total = str(len(objects))
-    
+    total = str(list.count(list(objects.all())))
+
     for idx, obj in enumerate(objects):
         if obj.key.endswith(suffix):
             logging.info("Processing %s of %s", str(idx), total)
