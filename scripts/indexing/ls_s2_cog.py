@@ -39,6 +39,7 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
         if obj.key.endswith(suffix):
             obj_key = obj.key
             logging.debug("Processing %s", obj_key)
+            logging.info("waiter names: %s", s3.waiter_names)
             raw_string = obj.get()['Body'].read().decode('utf8')
             yaml = YAML(typ=safety, pure = True)
             yaml.default_flow_style = False
