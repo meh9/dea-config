@@ -28,7 +28,7 @@ def get_s3_url(bucket_name, obj_key):
         bucket_name=bucket_name, obj_key=obj_key)
 
 
-def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
+def get_metadata_docs(bucket_name, prefix, suffix, unsafe, index):
     s3 = boto3.resource('s3')
     s3.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
     bucket = s3.Bucket(bucket_name)
@@ -38,14 +38,15 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     for obj in bucket.objects.filter(Prefix = str(prefix)):
         if obj.key.endswith(suffix):
             obj_key = obj.key
-            logging.debug("Processing %s", obj_key)
-            logging.info("waiter names: %s", s3.waiter_names)
-            raw_string = obj.get()['Body'].read().decode('utf8')
-            yaml = YAML(typ=safety, pure = True)
-            yaml.default_flow_style = False
-            data = yaml.load(raw_string)
-            yield obj_key,data
-            
+            if not index.datasets.has(obj_key):
+                logging.debug("Processing %s", obj_key)
+                raw_string = obj.get()['Body'].read().decode('utf8')
+                yaml = YAML(typ=safety, pure = True)
+                yaml.default_flow_style = False
+                data = yaml.load(raw_string)
+                yield obj_key,data
+            else
+                logging.debug("Already indexed %s", obj_key)
             
 def make_rules(index):
     all_product_names = [prod.name for prod in index.products.get_all()]
@@ -86,7 +87,7 @@ def iterate_datasets(bucket_name, config, prefix, suffix, func, unsafe, sources_
     start = time.time()
     counter = 0
 
-    for metadata_path,metadata_doc in get_metadata_docs(bucket_name, prefix, suffix, unsafe):
+    for metadata_path,metadata_doc in get_metadata_docs(bucket_name, prefix, suffix, unsafe, index):
         uri= get_s3_url(bucket_name, metadata_path)
         func(metadata_doc, uri, rules, index, sources_policy)
 
