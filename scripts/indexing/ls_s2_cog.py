@@ -32,19 +32,19 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe, index):
     s3 = boto3.resource('s3')
     s3.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
     bucket = s3.Bucket(bucket_name)
-    logging.info("Bucket : %s prefix: %s ", bucket_name, str(prefix))
+    logging.debug("Bucket : %s prefix: %s ", bucket_name, str(prefix))
     safety = 'safe' if not unsafe else 'unsafe'
+    yaml = YAML(typ=safety, pure = True)
 
     for obj in bucket.objects.filter(Prefix = str(prefix)):
         if obj.key.endswith(suffix):
             obj_key = obj.key
-            logging.info("Processing %s", obj_key)
+            logging.debug("Processing %s", obj_key)
             raw_string = obj.get()['Body'].read().decode('utf8')
-            yaml = YAML(typ=safety, pure = True)
             yaml.default_flow_style = False
             data = yaml.load(raw_string)
             if index.datasets.has(data["id"]):
-                logging.info("Already indexed %s", obj_key)
+                logging.info("Already indexed")
             else:
                 yield obj_key,data
    
