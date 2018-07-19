@@ -2,12 +2,8 @@
 from xml.etree import ElementTree
 from pathlib import Path
 import os
-from osgeo import osr
 import dateutil
-from dateutil import parser
 import time
-import uuid
-import yaml
 import logging
 import click
 import re
