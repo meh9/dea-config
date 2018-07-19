@@ -39,15 +39,16 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe, index):
         if obj.key.endswith(suffix):
             obj_key = obj.key
             uri = get_s3_url(bucket_name, obj_key)
-            if not index.datasets.has(uri):
-                logging.debug("Processing %s", obj_key)
+            if index.datasets.has(uri):
+                logging.info("Already indexed %s", obj_key)
+            else:
+                logging.info("Processing %s", obj_key)
                 raw_string = obj.get()['Body'].read().decode('utf8')
                 yaml = YAML(typ=safety, pure = True)
                 yaml.default_flow_style = False
                 data = yaml.load(raw_string)
                 yield obj_key,data
-            else
-                logging.debug("Already indexed %s", obj_key)
+   
             
 def make_rules(index):
     all_product_names = [prod.name for prod in index.products.get_all()]
