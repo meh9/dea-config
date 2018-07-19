@@ -5,7 +5,7 @@ import os
 from osgeo import osr
 import dateutil
 from dateutil import parser
-from datetime import timedelta
+import time
 import uuid
 import yaml
 import logging
@@ -34,17 +34,13 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe):
     bucket = s3.Bucket(bucket_name)
     logging.info("Bucket : %s prefix: %s ", bucket_name, str(prefix))
     safety = 'safe' if not unsafe else 'unsafe'
-    
-    logging.info("Counting objects in bucket")
-    counter = 0
 
-    for idx,obj in enumerate(bucket.objects.filter(Prefix = str(prefix))):
+    for obj in bucket.objects.filter(Prefix = str(prefix)):
         counter += 1
-        logging.info("Skipping %s", str(idx))
+        logging.info("Skipping %s", str(counter))
         if obj.key.endswith(suffix):
-            logging.info("Processing %s", str(counter), total)
             obj_key = obj.key
-            logging.debug("Processing %s", obj_key)
+            logging.debug("Processing %s: %s", str(counter), obj_key)
             raw_string = obj.get()['Body'].read().decode('utf8')
             yaml = YAML(typ=safety, pure = True)
             yaml.default_flow_style = False
@@ -87,10 +83,19 @@ def iterate_datasets(bucket_name, config, prefix, suffix, func, unsafe, sources_
     dc=datacube.Datacube(config=config)
     index = dc.index
     rules = make_rules(index)
-    
+
+    start = time.time()
+    counter = 0
+
     for metadata_path,metadata_doc in get_metadata_docs(bucket_name, prefix, suffix, unsafe):
         uri= get_s3_url(bucket_name, metadata_path)
         func(metadata_doc, uri, rules, index, sources_policy)
+
+        counter += 1
+        now = time.time()
+        elapsed = now - start
+        speed = counter / elapsed
+        logging.info('%s records indexed per second', str(speed))
 
 
 @click.command(help= "Enter Bucket name. Optional to enter configuration file to access a different database")
