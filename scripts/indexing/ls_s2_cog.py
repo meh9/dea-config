@@ -38,7 +38,8 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe, index):
     for obj in bucket.objects.filter(Prefix = str(prefix)):
         if obj.key.endswith(suffix):
             obj_key = obj.key
-            if not index.datasets.has(obj_key):
+            uri = get_s3_url(bucket_name, obj_key)
+            if not index.datasets.has(uri):
                 logging.debug("Processing %s", obj_key)
                 raw_string = obj.get()['Body'].read().decode('utf8')
                 yaml = YAML(typ=safety, pure = True)
