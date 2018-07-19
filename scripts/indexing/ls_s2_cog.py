@@ -38,15 +38,14 @@ def get_metadata_docs(bucket_name, prefix, suffix, unsafe, index):
     for obj in bucket.objects.filter(Prefix = str(prefix)):
         if obj.key.endswith(suffix):
             obj_key = obj.key
-            uri = get_s3_url(bucket_name, obj_key)
-            if index.datasets.has(uri):
+            logging.info("Processing %s", obj_key)
+            raw_string = obj.get()['Body'].read().decode('utf8')
+            yaml = YAML(typ=safety, pure = True)
+            yaml.default_flow_style = False
+            data = yaml.load(raw_string)
+            if index.datasets.has(data["id"]):
                 logging.info("Already indexed %s", obj_key)
             else:
-                logging.info("Processing %s", obj_key)
-                raw_string = obj.get()['Body'].read().decode('utf8')
-                yaml = YAML(typ=safety, pure = True)
-                yaml.default_flow_style = False
-                data = yaml.load(raw_string)
                 yield obj_key,data
    
             
